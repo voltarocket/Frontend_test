@@ -23,9 +23,14 @@ const SidebarWrapper = styled.div`
     top: 0;
     left: 0;
     height: 100%;
-    width: ${props => (props.isOpened ? '250px' : '60px')};
+    width: ${props => (props.isOpened ? '260px' : '61px')};
     transition: width 0.3s ease;
-    background-color: ${props => (props.theme === 'dark' ? '#1a1a1a' : '#fff')};
+    background-color: var(
+        ${props =>
+            props.color === 'dark'
+                ? '--color-sidebar-background-dark-default'
+                : '--color-sidebar-background-light-default'}
+    );
     box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
     padding-top: 20px;
     display: flex;
@@ -38,72 +43,112 @@ const LogoContainer = styled.div`
     align-items: center;
     justify-content: center;
     margin-bottom: 30px;
+
     img {
         width: 40px;
         height: 40px;
-        margin-right: 10px;
+        margin-right: 4px;
     }
+
     span {
         font-size: 20px;
         font-weight: bold;
-        color: ${props => (props.theme === 'dark' ? '#fff' : '#000')};
+        color: var(
+            ${props =>
+                props.color === 'dark'
+                    ? '--color-text-logo-dark-default'
+                    : '--color-text-logo-light-default'}
+        );
     }
 `;
 
 const MenuItem = styled.div`
     display: flex;
+    justify-content: start;
     align-items: center;
-    padding: 10px;
+    padding: 10px 0px 10px 10px;
+    margin-right: 13px;
     width: 100%;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    color: ${props => (props.theme === 'dark' ? '#fff' : '#000')};
+    color: var(
+        ${props =>
+            props.color === 'dark'
+                ? '--color-text-dark-default'
+                : '--color-text-light-default'}
+    );
 
     &:hover {
-        background-color: ${props => (props.theme === 'dark' ? '#333' : '#e5e5e5')};
-        border-radius: 10px;
+        background-color: var(
+            ${props =>
+                props.color === 'dark'
+                    ? '--color-sidebar-background-dark-hover'
+                    : '--color-sidebar-background-light-hover'}
+        );
     }
 
     span {
         margin-left: 10px;
         font-size: 16px;
         font-weight: ${props => (props.isActive ? 'bold' : 'normal')};
-        color: ${props => (props.theme === 'dark' ? (props.isActive ? '#00aaff' : '#ccc') : (props.isActive ? '#007bff' : '#333'))};
-    }
-`;
+        color: var(
+            ${props =>
+                props.color === 'dark'
+                    ? (props.isActive
+                        ? '--color-text-dark-active'
+                        : '--color-text-dark-default')
+                    : (props.isActive
+                        ? '--color-text-light-active'
+                        : '--color-text-light-default')}
+        );
+    }`;
 
 const ToggleButton = styled.div`
     position: absolute;
     top: 20px;
-    left: ${props => (props.isOpened ? '220px' : '75px')};
+    left: ${props => (props.isOpened ? '210px' : '70px')};
     cursor: pointer;
     transition: left 0.3s ease;
-    background-color: ${props => (props.theme === 'dark' ? '#333' : '#fff')};
+    background-color: var(
+        ${props =>
+            props.color === 'dark'
+                ? '--color-button-background-dark-default'
+                : '--color-button-background-light-default'}
+    );
     border-radius: 50%;
-    padding: 10px;
-    wight: 80px;
-    
+    width: 40px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 
     &:hover {
-        background-color: ${props => (props.theme === 'dark' ? '#555' : '#e5e5e5')};
+        background-color: var(
+            ${props =>
+                props.color === 'dark'
+                    ? '--color-sidebar-background-dark-hover'
+                    : '--color-sidebar-background-light-hover'}
+        );
     }
-    font-size: 24px;
-    color: ${props => (props.theme === 'dark' ? '#fff' : '#000')};
+
+    font-size: 20px;
+
+    color: ${props =>
+            props.color === 'dark' 
+                ? 'var(---color-sidebar-background-dark-default)'
+                : 'var(--color-text-light-default)'
+    }
 `;
 
-const Sidebar = (props) => {
-    const { theme } = props;
+const Sidebar = ({ color }) => {
     const [isOpened, setIsOpened] = useState(false);
-    const [activeRoute, setActiveRoute] = useState('/sales'); // Дефолтный активный маршрут
+    const [activeRoute, setActiveRoute] = useState('/sales'); 
 
-    const containerClassnames = isOpened ? 'sidebar opened' : 'sidebar';
+    const goToRoute = path => {
 
-    const goToRoute = (path) => {
-        setActiveRoute(path);
+setActiveRoute(path);
         console.log(`Going to "${path}"`);
     };
 
@@ -112,8 +157,8 @@ const Sidebar = (props) => {
     };
 
     return (
-        <SidebarWrapper theme={theme} isOpened={isOpened}>
-            <LogoContainer theme={theme}>
+        <SidebarWrapper color={color} isOpened={isOpened}>
+            <LogoContainer color={color}>
                 <img src={logo} alt="Logo" />
                 {isOpened && <span>Technifly</span>}
             </LogoContainer>
@@ -122,7 +167,7 @@ const Sidebar = (props) => {
                 {routes.map(route => (
                     <MenuItem
                         key={route.title}
-                        theme={theme}
+                        color={color}
                         isActive={route.path === activeRoute}
                         onClick={() => goToRoute(route.path)}
                     >
@@ -136,7 +181,7 @@ const Sidebar = (props) => {
                 {bottomRoutes.map(route => (
                     <MenuItem
                         key={route.title}
-                        theme={theme}
+                        color={color}
                         isActive={route.path === activeRoute}
                         onClick={() => goToRoute(route.path)}
                     >
@@ -146,7 +191,7 @@ const Sidebar = (props) => {
                 ))}
             </div>
 
-            <ToggleButton isOpened={isOpened} theme={theme} onClick={toggleSidebar}>
+            <ToggleButton color={color} isOpened={isOpened} onClick={toggleSidebar}>
                 <FontAwesomeIcon icon={isOpened ? 'angle-left' : 'angle-right'} />
             </ToggleButton>
         </SidebarWrapper>
@@ -154,11 +199,11 @@ const Sidebar = (props) => {
 };
 
 Sidebar.propTypes = {
-    theme: PropTypes.oneOf(['light', 'dark']),
+    color: PropTypes.oneOf(['light', 'dark']),
 };
 
 Sidebar.defaultProps = {
-    theme: 'light',
+    color: 'light',
 };
 
 export default Sidebar;
